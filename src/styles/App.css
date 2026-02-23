@@ -1,0 +1,38 @@
+.app-container {
+  padding: 30px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.app-header {
+  margin: 16px 0 24px 0;
+}
+
+/* Hero section that fills viewport under navbar */
+.hero {
+  background: #012b2a; /* midnight green */
+  padding: 24px 0;
+}
+
+.hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28vh; /* smaller search space */
+}
+
+/* global background to avoid white gap */
+html, body, #root {
+  height: 100%;
+  background: #001a1a !important; /* ensure whole viewport uses theme color */
+}
+
+/* wrapper for All Commands full-page view to match theme */
+.all-page-wrap {
+  background: #001a1a;
+  min-height: 100vh; /* ensure full-page background */
+  padding-top: 24px;
+  padding-bottom: 48px;
+}

@@ -1,0 +1,35 @@
+.command-card {
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: transparent;
+}
+
+.command-card-meta {
+  font-size: 14px;
+  color: rgba(234,240,255,0.7);
+}
+
+.command-card-pre {
+  margin: 10px 0;
+  background: rgba(89, 185, 132, 0.25);
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: all;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.command-card-pre:hover {
+  background: rgba(17,25,36,0.34);
+}
+
+.command-card-pre.copied {
+  box-shadow: 0 0 0 3px rgba(100,200,180,0.18) inset;
+}
+
+.command-card-description {
+  margin: 10px 0;
+  color: rgba(234,240,255,0.85);
+}
