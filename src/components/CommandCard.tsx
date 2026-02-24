@@ -6,9 +6,10 @@ import "../styles/CommandCard.css"
 interface Props {
   command: Command
   onUse: (id: string) => void
+  onEdit?: (cmd: Command) => void
 }
 
-export default function CommandCard({ command, onUse }: Props) {
+export default function CommandCard({ command, onUse, onEdit }: Props) {
   const { incrementUsage } = useCommandContext()
   const [copied, setCopied] = useState(false)
 
@@ -33,6 +34,9 @@ export default function CommandCard({ command, onUse }: Props) {
 
   return (
     <div className="command-card">
+      {onEdit && (
+        <button className="command-card-edit" aria-label="Edit command" onClick={() => onEdit(command)}>✎</button>
+      )}
       <strong>{command.title}</strong>
       <div className="command-card-meta">
         {command.app} | {command.category}

@@ -4,6 +4,7 @@
   border-radius: 8px;
   margin-bottom: 10px;
   background: transparent;
+  position: relative;
 }
 
 .command-card-meta {
@@ -33,3 +34,17 @@
   margin: 10px 0;
   color: rgba(234,240,255,0.85);
 }
+
+.command-card-edit {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #eaf0ff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.command-card-edit:hover { background: rgba(255,255,255,0.02) }

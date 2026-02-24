@@ -5,21 +5,61 @@ interface Props {
   onToggleMostUsed: () => void
   onViewAll: () => void
   onAddCommand?: () => void
+  onImportCommands?: () => void
   onExportCommands?: () => void
 }
 
-export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onExportCommands }: Props) {
+export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onImportCommands, onExportCommands }: Props) {
   const [open, setOpen] = useState(false)
+  const [commandsOpen, setCommandsOpen] = useState(false)
+  const [closing, setClosing] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
+  
+
+  // close nested submenu when main dropdown closes
   useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (!ref.current) return
-      if (!ref.current.contains(e.target as Node)) setOpen(false)
+    if (!open) setCommandsOpen(false)
+  }, [open])
+
+  // helper to close with animation when possible
+  const closeWithAnim = (after?: () => void) => {
+    if (!ref.current) { setOpen(false); setCommandsOpen(false); return }
+    const node = ref.current.querySelector('.nav-dropdown') as HTMLElement | null
+    if (!node) { setOpen(false); setCommandsOpen(false); return }
+    setClosing(true)
+    node.classList.add('closing')
+    const onAnim = () => {
+      setOpen(false)
+      setCommandsOpen(false)
+      setClosing(false)
+      node.classList.remove('closing')
+      node.removeEventListener('animationend', onAnim)
+      if (after) after()
     }
-    document.addEventListener("click", onDoc)
-    return () => document.removeEventListener("click", onDoc)
-  }, [])
+    node.addEventListener('animationend', onAnim)
+  }
+
+  // listen for outside clicks and Escape key to close with animation
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!ref.current) return
+      if (!ref.current.contains(e.target as Node)) {
+        if (open) closeWithAnim()
+      }
+    }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) closeWithAnim()
+    }
+
+    document.addEventListener('click', onDocClick)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('click', onDocClick)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   return (
     <header className="nav-bar">
@@ -33,25 +73,46 @@ export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onEx
           <button
             className="nav-hamburger"
             aria-label="Open menu"
-            onClick={() => setOpen(v => !v)}
+            onClick={() => {
+              if (open) closeWithAnim()
+              else setOpen(true)
+            }}
           >
             ☰
           </button>
 
           {open && (
             <div className="nav-dropdown">
-              <button className="nav-dropdown-item" onClick={() => { onToggleMostUsed(); setOpen(false) }}>
-                Most Used
-              </button>
-              <button className="nav-dropdown-item" onClick={() => { onViewAll(); setOpen(false) }}>
-                View All Commands
-              </button>
-              <button className="nav-dropdown-item" onClick={() => { onAddCommand && onAddCommand(); setOpen(false) }}>
-                Add Command
-              </button>
-              <button className="nav-dropdown-item" onClick={() => { onExportCommands && onExportCommands(); setOpen(false) }}>
-                Export Commands
-              </button>
+              <div className="nav-dropdown-list">
+
+                <div>
+                  <button className="nav-dropdown-item primary" onClick={() => { setCommandsOpen(v => !v) }}>
+                    Commands
+                  </button>
+
+                  {commandsOpen && (
+                    <div className="nav-submenu">
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => onViewAll()) }}>
+                        View All
+                      </button>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onImportCommands && onImportCommands() }) }}>
+                        Import
+                      </button>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onExportCommands && onExportCommands() }) }}>
+                        Export
+                      </button>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onAddCommand && onAddCommand() }) }}>
+                        Add
+                      </button>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => onToggleMostUsed()) }}>
+                        Most Used
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* duplicate top-level command buttons removed; use submenu under 'Commands' */}
+              </div>
             </div>
           )}
         </div>
