@@ -19,10 +19,21 @@
 .add-modal-header{display:flex;justify-content:space-between;align-items:center}
 .add-modal-header h3{margin:0}
 .add-close{background:transparent;border:0;color:inherit;font-size:1.1rem}
-.add-modal-body{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem}
+.add-modal-body{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-top:0.5rem}
 .add-modal-body label{display:flex;flex-direction:column;font-size:0.85rem}
 .add-modal-body input,.add-modal-body textarea,.add-modal-body select{background:#071a1a;border:1px solid rgba(255,255,255,0.06);color:inherit;padding:0.5rem;border-radius:6px}
-.add-modal-body textarea{grid-column:1 / -1;min-height:80px}
+.add-modal-body textarea{grid-column:2;min-height:72px}
 .add-modal-actions{display:flex;justify-content:flex-end;gap:0.5rem;margin-top:0.75rem}
 .btn{background:#0f6b66;color:white;border:0;padding:0.5rem 0.9rem;border-radius:6px}
 .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+
+.btn-danger{background:#b33;color:white;border:0;padding:0.45rem 0.8rem;border-radius:6px}
+.btn-danger:hover{opacity:0.95}
+
+.confirm-delete-note{color:#f8d7da;margin-right:8px}
+
+.add-modal-body input[readonly]{background:#021313;border-color:rgba(255,255,255,0.03);opacity:0.9}
+
+.add-modal-body label.tags-label{margin-top:-56px}
+
+.field-error { color: #f4b4b4; font-size: 13px; margin-top: 6px }

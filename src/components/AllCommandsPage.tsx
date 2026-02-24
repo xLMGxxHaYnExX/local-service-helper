@@ -8,9 +8,10 @@ import { useCommandSearch } from "../hooks/useCommandSearch"
 interface Props {
   commands: Command[]
   onClose?: () => void
+  onEdit?: (cmd: Command) => void
 }
 
-export default function AllCommandsPage({ commands, onClose }: Props) {
+export default function AllCommandsPage({ commands, onClose, onEdit }: Props) {
   const [appFilter, setAppFilter] = useState("All")
   const [categoryFilter, setCategoryFilter] = useState("All")
 
@@ -39,7 +40,7 @@ export default function AllCommandsPage({ commands, onClose }: Props) {
 
       <div className="all-commands-list">
         {filtered.map(cmd => (
-          <CommandCard key={cmd.id} command={cmd} onUse={() => {}} />
+          <CommandCard key={cmd.id} command={cmd} onUse={() => {}} onEdit={onEdit} />
         ))}
       </div>
     </div>

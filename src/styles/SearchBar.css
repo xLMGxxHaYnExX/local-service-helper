@@ -23,7 +23,8 @@
 
 .search-bar-clear {
   position: absolute;
-  left: 930px;
+  right: -48px;
+  left: auto;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
@@ -38,10 +39,10 @@
 .search-bar-clear:hover { background: rgba(255,255,255,0.02); color: #fff }
 
 .recent-dropdown {
-  /* position: absolute; */
+  position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 105%;
+  width: 100%;
   background: #071a1a;
   border: 1px solid rgba(255,255,255,0.04);
   border-radius: 8px;
