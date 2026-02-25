@@ -1,0 +1,39 @@
+.import-preview-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.5);
+  z-index:2200;
+}
+.import-preview{
+  width:720px;
+  max-width:92%;
+  background:#071a1a;
+  color:#d9f0ef;
+  border-radius:8px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.import-preview-header{display:flex;justify-content:space-between;align-items:center}
+.import-preview-header h3{margin:0}
+.add-close{background:transparent;border:0;color:inherit;font-size:1.1rem}
+.import-preview-body{margin-top:8px}
+.import-count{font-size:0.9rem;margin-bottom:8px;color:#9fd2cc}
+.import-list{max-height:340px;overflow:auto;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:6px}
+.import-item{padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+.import-item:last-child{border-bottom:0}
+.import-item-title{font-weight:600}
+.import-item-sub{font-size:0.85rem;color:#bcdad7;margin-top:4px}
+.import-more{padding:8px;color:#d0d6d6;text-align:center}
+.import-preview-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;align-items:center}
+.btn{background:#0f6b66;color:white;border:0;padding:0.5rem 0.9rem;border-radius:6px}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+
+.import-progress-wrap{display:flex;align-items:center;gap:8px;width:100%}
+.import-progress-bar{flex:1;height:12px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden}
+.import-progress-fill{height:100%;background:linear-gradient(90deg,#4ee6c7,#0f6b66);width:0;transition:width 300ms linear}
+.import-progress-text{min-width:44px;text-align:right;color:#cfeee8}
+
+.import-json-edit{width:100%;min-height:120px;background:#021313;border:1px solid rgba(255,255,255,0.03);color:inherit;padding:8px;border-radius:6px;font-family:monospace;font-size:13px}

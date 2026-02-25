@@ -159,29 +159,29 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
 
         <div className="add-modal-body">
           <label>ID (optional)
-            <input value={id ?? ""} onChange={e => setId(e.target.value)} placeholder="custom-cmd" readOnly={isEdit} />
+            <input value={id ?? ""} onChange={e => setId(e.target.value)} placeholder="e.g. my-custom-command" readOnly={isEdit} />
           </label>
 
           <label>Title (required)
-            <input value={title} onChange={e => setTitle(e.target.value)} />
+            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Open repository in editor" />
             {titleError && <div className="field-error">{titleError}</div>}
           </label>
 
           <label>App
-            <input value={app} onChange={e => setApp(e.target.value)} placeholder="e.g. Terminal" />
+            <input value={app} onChange={e => setApp(e.target.value)} placeholder="e.g. Terminal, VSCode, Browser" />
           </label>
 
           <label>Category
-            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Git" />
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Git, Docker, Productivity" />
           </label>
 
           <label>Command (required)
-            <input value={command} onChange={e => setCommand(e.target.value)} />
+            <input value={command} onChange={e => setCommand(e.target.value)} placeholder="e.g. git status or code ." />
             {commandError && <div className="field-error">{commandError}</div>}
           </label>
 
           <label>Priority
-            <input type="number" value={priority} onChange={e => setPriority(Number(e.target.value))} />
+            <input type="number" value={priority} onChange={e => setPriority(Number(e.target.value))} placeholder="e.g. 500 (higher = shown earlier)" />
           </label>
 
           <label>Type
@@ -192,11 +192,11 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
           </label>
 
           <label>Description
-            <textarea value={description} onChange={e => setDescription(e.target.value)} />
+            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Short description of what the command does" />
           </label>
 
           <label className="tags-label">Tags (comma separated)
-            <input value={tags} onChange={e => setTags(e.target.value)} />
+            <input value={tags} onChange={e => setTags(e.target.value)} placeholder="e.g. git,repo,open" />
           </label>
         </div>
 

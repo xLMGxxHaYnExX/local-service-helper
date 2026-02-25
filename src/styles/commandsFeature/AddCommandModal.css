@@ -38,6 +38,8 @@
 
 .field-error { color: #f4b4b4; font-size: 13px; margin-top: 6px }
 
+/* helper example text moved into input placeholders; removed .field-example */
+
 .add-modal{ position: relative }
 
 .import-overlay{
