@@ -1,1 +1,1 @@
-export { useCommandSearch } from './useCommandSearch'
+export { useCommandSearch } from './commandsFeature/useCommandSearch'

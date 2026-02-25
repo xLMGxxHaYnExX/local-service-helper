@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import "../styles/SearchBar.css"
+import "../../styles/commandsFeature/SearchBar.css"
 import RecentSearches from "./RecentSearches"
 
 interface Props {

@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react"
-import type { Command } from "./types/Command"
-import { fetchAllCommands } from "./api/commands"
-import { useCommandSearch } from "./hooks/useCommandSearch"
-import SearchBar from "./components/SearchBar"
+import type { Command } from "./types/commandsFeature/Command"
+import { fetchAllCommands, bulkSaveCommands } from "./api/commandsFeature/commands"
+import { useCommandSearch } from "./hooks/commandsFeature/useCommandSearch"
+import SearchBar from "./components/commandsFeature/SearchBar"
 // Filters handled on AllCommandsPage
-import CommandCard from "./components/CommandCard"
-import { addRecentSearch, getUserCommands } from "./utils/storage"
-import AddCommandModal from "./components/AddCommandModal"
-import MostUsed from "./components/MostUsed"
-import AllCommandsPage from "./components/AllCommandsPage"
-import CommandPalette from "./components/CommandPalette"
-import NavBar from "./components/NavBar"
+import CommandCard from "./components/commandsFeature/CommandCard"
+import { addRecentSearch, getUserCommands } from "./utils/commandsFeature/storage"
+import AddCommandModal from "./components/commandsFeature/AddCommandModal"
+import MostUsed from "./components/commandsFeature/MostUsed"
+import AllCommandsPage from "./components/commandsFeature/AllCommandsPage"
+import CommandPalette from "./components/commandsFeature/CommandPalette"
+import NavBar from "./components/commandsFeature/NavBar"
 import "./styles/App.css"
-import { bulkSaveCommands } from "./api/commands"
 import { useRef } from "react"
 
 export default function App() {
   const [commands, setCommands] = useState<Command[]>([])
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [importing, setImporting] = useState(false)
+  const [importMessage, setImportMessage] = useState<string | null>(null)
+
+  // import overlay styles are in src/styles/App.css
 
   useEffect(() => {
     let mounted = true
@@ -117,7 +120,11 @@ export default function App() {
 
   const handleFile = async (file?: File | null) => {
     if (!file) return
+    const MIN_IMPORT_MS = 700
+    setImporting(true)
+    const start = Date.now()
     try {
+      console.info('Import started:', file.name)
       const text = await file.text()
       const parsed = JSON.parse(text)
       if (!Array.isArray(parsed)) throw new Error('Import JSON must be an array')
@@ -137,8 +144,19 @@ export default function App() {
       // merge saved items into state
       if (res.saved.length) setCommands(prev => [...res.saved, ...prev])
       console.info(`Import: saved ${res.saved.length}, failed ${res.failed.length}`)
+      setImportMessage(`Imported ${res.saved.length} items`)
     } catch (err) {
       console.warn('Import failed', err)
+      setImportMessage('Import failed')
+    } finally {
+      const elapsed = Date.now() - start
+      const remaining = MIN_IMPORT_MS - elapsed
+      if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining))
+      setImporting(false)
+      // keep message visible briefly
+      if (importMessage) {
+        setTimeout(() => setImportMessage(null), 1500)
+      }
     }
   }
 
@@ -159,6 +177,21 @@ export default function App() {
         style={{ display: 'none' }}
         onChange={(e) => handleFile(e.target.files ? e.target.files[0] : null)}
       />
+
+      {importing && (
+        <div className="global-import-overlay">
+          <div className="global-import-panel">
+            <div className="global-import-spinner" />
+            <div>Importing…</div>
+          </div>
+        </div>
+      )}
+
+      {importMessage && (
+        <div className="import-toast-wrap" role="status" aria-live="polite">
+          <div className="import-toast">{importMessage}</div>
+        </div>
+      )}
 
       {!showAllPage && (
         <>

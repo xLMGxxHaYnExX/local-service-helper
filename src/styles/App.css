@@ -36,3 +36,49 @@ html, body, #root {
   padding-top: 24px;
   padding-bottom: 48px;
 }
+
+/* Global import overlay shown while importing files */
+.global-import-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.35);
+  z-index:2000;
+}
+.global-import-panel{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:linear-gradient(180deg,#0f6b66,#0b4d4a);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:8px;
+  box-shadow:0 6px 22px rgba(0,0,0,0.45);
+}
+.global-import-spinner{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.35);
+  border-top-color:#fff;
+  animation: spin 900ms linear infinite;
+}
+
+/* small toast in top-right showing import result */
+.import-toast-wrap{
+  position:fixed;
+  right:20px;
+  top:20px;
+  z-index:2100;
+}
+.import-toast{
+  background:#222;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:6px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.4);
+}
+
+@keyframes spin{ to { transform: rotate(360deg); } }

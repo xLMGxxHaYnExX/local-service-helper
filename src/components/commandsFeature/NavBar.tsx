@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import "../styles/NavBar.css"
+import "../../styles/commandsFeature/NavBar.css"
 
 interface Props {
   onToggleMostUsed: () => void
@@ -12,14 +12,15 @@ interface Props {
 export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onImportCommands, onExportCommands }: Props) {
   const [open, setOpen] = useState(false)
   const [commandsOpen, setCommandsOpen] = useState(false)
-  const [closing, setClosing] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
-
-  
 
   // close nested submenu when main dropdown closes
   useEffect(() => {
-    if (!open) setCommandsOpen(false)
+    if (!open) {
+      // schedule to avoid sync state update inside effect
+      const t = setTimeout(() => setCommandsOpen(false), 0)
+      return () => clearTimeout(t)
+    }
   }, [open])
 
   // helper to close with animation when possible
@@ -27,12 +28,10 @@ export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onIm
     if (!ref.current) { setOpen(false); setCommandsOpen(false); return }
     const node = ref.current.querySelector('.nav-dropdown') as HTMLElement | null
     if (!node) { setOpen(false); setCommandsOpen(false); return }
-    setClosing(true)
     node.classList.add('closing')
     const onAnim = () => {
       setOpen(false)
       setCommandsOpen(false)
-      setClosing(false)
       node.classList.remove('closing')
       node.removeEventListener('animationend', onAnim)
       if (after) after()
@@ -95,13 +94,13 @@ export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onIm
                       <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => onViewAll()) }}>
                         View All
                       </button>
-                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onImportCommands && onImportCommands() }) }}>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { if (onImportCommands) onImportCommands() }) }}>
                         Import
                       </button>
-                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onExportCommands && onExportCommands() }) }}>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { if (onExportCommands) onExportCommands() }) }}>
                         Export
                       </button>
-                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { onAddCommand && onAddCommand() }) }}>
+                      <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => { if (onAddCommand) onAddCommand() }) }}>
                         Add
                       </button>
                       <button className="nav-dropdown-item nav-subitem" onClick={() => { closeWithAnim(() => onToggleMostUsed()) }}>
@@ -111,7 +110,6 @@ export default function NavBar({ onToggleMostUsed, onViewAll, onAddCommand, onIm
                   )}
                 </div>
 
-                {/* duplicate top-level command buttons removed; use submenu under 'Commands' */}
               </div>
             </div>
           )}

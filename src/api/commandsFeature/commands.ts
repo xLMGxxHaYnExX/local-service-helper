@@ -1,4 +1,4 @@
-import type { Command } from "../types/Command"
+import type { Command } from "../../types/commandsFeature/Command"
 
 const API_BASE = (import.meta.env.VITE_API_BASE as string) || "http://localhost:4000"
 
@@ -64,7 +64,6 @@ export async function fetchCommandById(id: string): Promise<Command | null> {
 
 export async function createCommand(payload: Partial<Command>): Promise<Command | null> {
   try {
-    // backend expects tagsJson (string) rather than tags array in some implementations
     const bodyPayload: any = { ...payload }
     if (Array.isArray(bodyPayload.tags)) {
       bodyPayload.tagsJson = JSON.stringify(bodyPayload.tags)
@@ -109,7 +108,6 @@ export async function updateCommand(id: string, payload: Partial<Command>): Prom
       const errText = await res.text().catch(() => '')
       console.warn("updateCommand failed status", res.status, errText)
 
-      // If the server returns 404 Not Found for the PUT, try the relative PUT path directly
       if (res.status === 404) {
         try {
           console.warn('updateCommand received 404 — attempting PUT to relative /api/commands/:id')
@@ -125,7 +123,6 @@ export async function updateCommand(id: string, payload: Partial<Command>): Prom
           console.warn('relative PUT attempt failed', pe)
         }
 
-        // As a last resort, try POST upsert (may return 409 if already exists)
         try {
           console.warn('attempting POST upsert to /api/commands as last resort')
           const postRes = await tryFetchWithFallback(`${API_BASE}/api/commands`, `/api/commands`, {
@@ -182,7 +179,6 @@ export async function bulkSaveCommands(commands: Partial<Command>[]): Promise<{ 
       const created = await createCommand(cmd)
       if (created) { saved.push(created); continue }
 
-      // try update if create failed (maybe exists)
       if (cmd.id) {
         const updated = await updateCommand(cmd.id, cmd)
         if (updated) { saved.push(updated); continue }

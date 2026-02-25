@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import type { Command } from "../types/Command"
-import { createCommand, updateCommand, deleteCommand } from "../api/commands"
-import "../styles/AddCommandModal.css"
+import type { Command } from "../../types/commandsFeature/Command"
+import { createCommand, updateCommand, deleteCommand } from "../../api/commandsFeature/commands"
+import "../../styles/commandsFeature/AddCommandModal.css"
 
 interface Props {
   onClose: () => void
@@ -16,7 +16,7 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
   const [id, setId] = useState<string | undefined>(initial?.id ?? undefined)
   const [app, setApp] = useState(initial?.app ?? "")
   const [category, setCategory] = useState(initial?.category ?? "")
-  const [type, setType] = useState<"command"|"shortcut">((initial?.type as any) ?? "command")
+  const [type, setType] = useState<"command"|"shortcut">((initial?.type as Command['type']) ?? "command")
   const [command, setCommand] = useState(initial?.command ?? "")
   const [description, setDescription] = useState(initial?.description ?? "")
   const [tags, setTags] = useState((initial?.tags ?? []).join(","))
@@ -29,23 +29,27 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
   const [commandError, setCommandError] = useState<string | null>(null)
 
   useEffect(() => {
-    // if initial changes while modal open, update fields
     if (initial) {
-      setTitle(initial.title ?? "")
-      setId(initial.id ?? undefined)
-      setApp(initial.app ?? "")
-      setCategory(initial.category ?? "")
-      setType((initial.type as any) ?? "command")
-      setCommand(initial.command ?? "")
-      setDescription(initial.description ?? "")
-      setTags((initial.tags ?? []).join(","))
-      setPriority(initial.priority ?? 500)
+      const t = setTimeout(() => {
+        setTitle(initial.title ?? "")
+        setId(initial.id ?? undefined)
+        setApp(initial.app ?? "")
+        setCategory(initial.category ?? "")
+        setType((initial.type as Command['type']) ?? "command")
+        setCommand(initial.command ?? "")
+        setDescription(initial.description ?? "")
+        setTags((initial.tags ?? []).join(","))
+        setPriority(initial.priority ?? 500)
+      }, 0)
+      return () => clearTimeout(t)
     }
   }, [initial])
 
   function makeId() {
     return `user-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`
   }
+
+
 
   const submit = async () => {
     const t = title.trim()
@@ -94,7 +98,6 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
         return
       }
 
-      // fallback: try update if create didn't return
       try {
         const updated = await updateCommand(finalId, payload)
         if (updated) {
@@ -122,7 +125,6 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
   async function handleDelete() {
     if (!id) return
 
-    // two-step confirmation
     if (!confirmDelete) {
       setConfirmDelete(true)
       return
@@ -183,7 +185,7 @@ export default function AddCommandModal({ onClose, onAdd, onUpdate, onDelete, in
           </label>
 
           <label>Type
-            <select value={type} onChange={e => setType(e.target.value as any)}>
+            <select value={type} onChange={e => setType(e.target.value as Command['type'])}>
               <option value="command">Command</option>
               <option value="shortcut">Shortcut</option>
             </select>
