@@ -1,23 +1,29 @@
 import { useState, useEffect } from "react"
-import type { Command } from "./types/Command"
-import { fetchAllCommands } from "./api/commands"
-import { useCommandSearch } from "./hooks/useCommandSearch"
-import SearchBar from "./components/SearchBar"
+import type { Command } from "./types/commandsFeature/Command"
+import { fetchAllCommands, bulkSaveCommands, createCommand, updateCommand } from "./api/commandsFeature/commands"
+import ImportPreviewModal from "./components/commandsFeature/ImportPreviewModal"
+import { useCommandSearch } from "./hooks/commandsFeature/useCommandSearch"
+import SearchBar from "./components/commandsFeature/SearchBar"
 // Filters handled on AllCommandsPage
-import CommandCard from "./components/CommandCard"
-import { addRecentSearch, getUserCommands } from "./utils/storage"
-import AddCommandModal from "./components/AddCommandModal"
-import MostUsed from "./components/MostUsed"
-import AllCommandsPage from "./components/AllCommandsPage"
-import CommandPalette from "./components/CommandPalette"
-import NavBar from "./components/NavBar"
+import CommandCard from "./components/commandsFeature/CommandCard"
+import { addRecentSearch, getUserCommands } from "./utils/commandsFeature/storage"
+import AddCommandModal from "./components/commandsFeature/AddCommandModal"
+import MostUsed from "./components/commandsFeature/MostUsed"
+import AllCommandsPage from "./components/commandsFeature/AllCommandsPage"
+import CommandPalette from "./components/commandsFeature/CommandPalette"
+import NavBar from "./components/commandsFeature/NavBar"
 import "./styles/App.css"
-import { bulkSaveCommands } from "./api/commands"
 import { useRef } from "react"
 
 export default function App() {
   const [commands, setCommands] = useState<Command[]>([])
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [importing, setImporting] = useState(false)
+  const [importMessage, setImportMessage] = useState<string | null>(null)
+  const [previewItems, setPreviewItems] = useState<Partial<Command>[] | null>(null)
+  const [importProgress, setImportProgress] = useState(0)
+
+  // import overlay styles are in src/styles/App.css
 
   useEffect(() => {
     let mounted = true
@@ -75,7 +81,9 @@ export default function App() {
     try {
       const usage = JSON.parse(localStorage.getItem('usage') || '{}')
       if (usage[id]) { delete usage[id]; localStorage.setItem('usage', JSON.stringify(usage)) }
-    } catch (e) {}
+    } catch {
+      // ignore
+    }
   }
 
   const exportCommands = () => {
@@ -117,6 +125,8 @@ export default function App() {
 
   const handleFile = async (file?: File | null) => {
     if (!file) return
+
+    // parse and show preview modal first
     try {
       const text = await file.text()
       const parsed = JSON.parse(text)
@@ -133,12 +143,63 @@ export default function App() {
         priority: item.priority,
       }))
 
-      const res = await bulkSaveCommands(payload)
-      // merge saved items into state
-      if (res.saved.length) setCommands(prev => [...res.saved, ...prev])
-      console.info(`Import: saved ${res.saved.length}, failed ${res.failed.length}`)
+      setPreviewItems(payload)
+      // clear the file input so selecting the same file again will trigger change
+      try { if (fileInputRef.current) (fileInputRef.current as HTMLInputElement).value = '' } catch { /* ignore */ }
+    } catch (err) {
+      console.warn('Import parse failed', err)
+      setImportMessage('Failed to parse JSON')
+      setTimeout(() => setImportMessage(null), 1500)
+      try { if (fileInputRef.current) (fileInputRef.current as HTMLInputElement).value = '' } catch { /* ignore */ }
+    }
+  }
+
+  // called from preview modal when user confirms import
+  const doImportConfirmed = async (itemsArg?: Partial<Command>[]) => {
+    const items = itemsArg ?? previewItems
+    if (!items || items.length === 0) return
+    setImportProgress(0)
+    setImporting(true)
+    const MIN_IMPORT_MS = 700
+    const start = Date.now()
+    try {
+      const saved: Command[] = []
+      const failed: Partial<Command>[] = []
+
+      for (let i = 0; i < items.length; i++) {
+        const cmd = items[i]
+        try {
+          const created = await createCommand(cmd)
+          if (created) saved.push(created)
+          else if (cmd.id) {
+            const updated = await updateCommand(cmd.id, cmd)
+            if (updated) saved.push(updated)
+            else failed.push(cmd)
+          } else {
+            failed.push(cmd)
+          }
+        } catch (err) {
+          console.warn('item import failed', err)
+          failed.push(cmd)
+        }
+
+        setImportProgress((i + 1) / items.length)
+      }
+
+      if (saved.length) setCommands(prev => [...saved, ...prev])
+      setImportMessage(`Imported ${saved.length} / ${items.length}`)
+      setPreviewItems(null)
     } catch (err) {
       console.warn('Import failed', err)
+      setImportMessage('Import failed')
+    } finally {
+      const elapsed = Date.now() - start
+      const remaining = MIN_IMPORT_MS - elapsed
+      if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining))
+      setImporting(false)
+      setImportProgress(0)
+      setTimeout(() => setImportMessage(null), 1500)
+      try { if (fileInputRef.current) (fileInputRef.current as HTMLInputElement).value = '' } catch { /* ignore */ }
     }
   }
 
@@ -159,6 +220,31 @@ export default function App() {
         style={{ display: 'none' }}
         onChange={(e) => handleFile(e.target.files ? e.target.files[0] : null)}
       />
+
+      {previewItems && (
+        <ImportPreviewModal
+            items={previewItems}
+            onClose={() => { setPreviewItems(null); try { if (fileInputRef.current) (fileInputRef.current as HTMLInputElement).value = '' } catch { /* ignore */ } }}
+            onConfirm={(items) => doImportConfirmed(items)}
+            importing={importing}
+            progress={importProgress}
+          />
+      )}
+
+      {importing && (
+        <div className="global-import-overlay">
+          <div className="global-import-panel">
+            <div className="global-import-spinner" />
+            <div>Importing…</div>
+          </div>
+        </div>
+      )}
+
+      {importMessage && (
+        <div className="import-toast-wrap" role="status" aria-live="polite">
+          <div className="import-toast">{importMessage}</div>
+        </div>
+      )}
 
       {!showAllPage && (
         <>

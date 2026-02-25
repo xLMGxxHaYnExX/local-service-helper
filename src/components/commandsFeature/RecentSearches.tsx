@@ -1,5 +1,5 @@
-import { getRecentSearches } from "../utils/storage"
-import "../styles/RecentSearches.css"
+import { getRecentSearches } from "../../utils/commandsFeature/storage"
+import "../../styles/commandsFeature/RecentSearches.css"
 
 interface Props {
   onSelect: (value: string) => void

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react"
-import type { Command } from "../types/Command"
-import { useCommandContext } from "../context/CommandContext"
-import "../styles/palette.css"
+import type { Command } from "../../types/commandsFeature/Command"
+import { useCommandContext } from "../../context/commandsFeature/CommandContext"
+import "../../styles/commandsFeature/palette.css"
 import Fuse from "fuse.js"
 
 interface Props {

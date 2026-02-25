@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import type { Command } from "../types/Command"
+import type { Command } from "../../types/commandsFeature/Command"
 
 export function useCommandSearch(
   commands: Command[],

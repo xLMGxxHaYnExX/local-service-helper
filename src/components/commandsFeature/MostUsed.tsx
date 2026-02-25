@@ -1,8 +1,8 @@
 import { useState } from "react"
-import type { Command } from "../types/Command"
-import { useCommandContext } from "../context/CommandContext"
+import type { Command } from "../../types/commandsFeature/Command"
+import { useCommandContext } from "../../context/commandsFeature/CommandContext"
 import CommandCard from "./CommandCard"
-import "../styles/mostUsedDrawer.css"
+import "../../styles/commandsFeature/mostUsedDrawer.css"
 
 interface Props {
   commands: Command[]
@@ -42,7 +42,6 @@ export default function MostUsed({ commands, open: openProp, setOpen: setOpenPro
           <div className="most-used-empty">No usage yet — use commands to populate this list.</div>
         )}
 
-        {/* Removed View All button from drawer - navigation should be triggered from NavBar only */}
       </aside>
     </>
   )

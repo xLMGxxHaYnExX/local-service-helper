@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react"
-import type { Command } from "../types/Command"
+import type { Command } from "../../types/commandsFeature/Command"
 import Filters from "./Filters"
 import CommandCard from "./CommandCard"
-import "../styles/AllCommandsPage.css"
-import { useCommandSearch } from "../hooks/useCommandSearch"
+import "../../styles/commandsFeature/AllCommandsPage.css"
+import { useCommandSearch } from "../../hooks/commandsFeature/useCommandSearch"
 
 interface Props {
   commands: Command[]

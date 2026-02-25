@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { useCommandContext } from "../context/CommandContext"
-import type { Command } from "../types/Command"
-import "../styles/CommandCard.css"
+import { useCommandContext } from "../../context/commandsFeature/CommandContext"
+import type { Command } from "../../types/commandsFeature/Command"
+import "../../styles/commandsFeature/CommandCard.css"
 
 interface Props {
   command: Command

@@ -1,4 +1,4 @@
-import type { Command } from "../types/Command"
+import type { Command } from "../../types/commandsFeature/Command"
 
 export function getUsage(): Record<string, number> {
   return JSON.parse(localStorage.getItem("usage") || "{}")

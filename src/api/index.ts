@@ -1,1 +1,1 @@
-export * from './commands'
+export * from './commandsFeature/commands'

@@ -1,4 +1,4 @@
-import "../styles/Filters.css"
+import "../../styles/commandsFeature/Filters.css"
 
 interface Props {
   apps: string[]
